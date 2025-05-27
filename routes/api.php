@@ -1,0 +1,24 @@
+<?php
+
+declare(strict_types=1);
+
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ClientController;
+use App\Http\Controllers\Api\ProjectController;
+use App\Http\Controllers\Api\TimeLogController;
+use App\Http\Controllers\Api\ReportController;
+use Illuminate\Support\Facades\Route;
+
+// Authentication Routes
+Route::post('/register', [AuthController::class, 'register']);
+Route::post('/login', [AuthController::class, 'login']);
+
+// Protected Routes
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/logout', [AuthController::class, 'logout']);
+    
+    // Clients
+    Route::apiResource('clients', ClientController::class);
+    
+    
+}); 
