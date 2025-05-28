@@ -28,4 +28,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/time-logs/start', [TimeLogController::class, 'startTimer']);
     Route::post('/time-logs/{timeLog}/stop', [TimeLogController::class, 'stopTimer']);
     
-    }); 
+    // Reports
+    Route::get('/reports', [ReportController::class, 'index']);
+}); 
