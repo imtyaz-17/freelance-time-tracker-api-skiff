@@ -1,0 +1,792 @@
+{
+	"info": {
+		"_postman_id": "7dfbdfef-966b-4265-88d8-7721284cf757",
+		"name": "Freelance Time Tracker API",
+		"description": "A RESTful API to help freelancers log, manage, and report their work hours across clients and projects.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "38917343"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"John Doe\",\n    \"email\": \"john@example.com\",\n    \"password\": \"password123\",\n    \"password_confirmation\": \"password123\"\n}"
+						},
+						"url": "{{base_url}}/register",
+						"description": "Register a new user"
+					},
+					"response": []
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData && jsonData.token) {",
+									"    pm.environment.set(\"auth_token\", jsonData.token);",
+									"    console.log(\"Token saved to environment\");",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"imtyaz@example.com\",\n    \"password\": \"password\"\n}"
+						},
+						"url": "{{base_url}}/login",
+						"description": "Login with email and password"
+					},
+					"response": []
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{auth_token}}"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": "{{base_url}}/logout",
+						"description": "Logout and invalidate token"
+					},
+					"response": []
+				}
+			],
+			"description": "User registration, login, and logout endpoints"
+		},
+		{
+			"name": "Clients",
+			"item": [
+				{
+					"name": "List Clients",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{auth_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": "{{base_url}}/clients",
+						"description": "Get list of all clients"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Client",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{auth_token}}"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"ABC Company\",\n    \"email\": \"contact@abccompany.com\",\n    \"contact_person\": \"Jane Smith\"\n}"
+						},
+						"url": "{{base_url}}/clients",
+						"description": "Create a new client"
+					},
+					"response": []
+				},
+				{
+					"name": "Show Client",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{auth_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": "{{base_url}}/clients/1",
+						"description": "Get a specific client by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Client",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{auth_token}}"
+							}
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"ABC Company Updated\",\n    \"email\": \"new@abccompany.com\",\n    \"contact_person\": \"John Johnson\"\n}"
+						},
+						"url": "{{base_url}}/clients/1",
+						"description": "Update an existing client"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Client",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{auth_token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": "{{base_url}}/clients/1",
+						"description": "Delete a client"
+					},
+					"response": []
+				}
+			],
+			"description": "Client management endpoints"
+		},
+		{
+			"name": "Projects",
+			"item": [
+				{
+					"name": "List Projects",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{auth_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": "{{base_url}}/projects",
+						"description": "Get list of all projects"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Project",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{auth_token}}"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Website Redesign\",\n    \"description\": \"Complete redesign of company website\",\n    \"client_id\": 1,\n    \"status\": \"active\",\n    \"deadline\": \"2024-12-31\"\n}"
+						},
+						"url": "{{base_url}}/projects",
+						"description": "Create a new project"
+					},
+					"response": []
+				},
+				{
+					"name": "Show Project",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{auth_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": "{{base_url}}/projects/1",
+						"description": "Get a specific project by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Project",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{auth_token}}"
+							}
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Website Redesign Updated\",\n    \"description\": \"Complete redesign of company website with modern UX\",\n    \"status\": \"completed\"\n}"
+						},
+						"url": "{{base_url}}/projects/1",
+						"description": "Update an existing project"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Project",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{auth_token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": "{{base_url}}/projects/1",
+						"description": "Delete a project"
+					},
+					"response": []
+				}
+			],
+			"description": "Project management endpoints"
+		},
+		{
+			"name": "Time Logs",
+			"item": [
+				{
+					"name": "List Time Logs",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{auth_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/time-logs?date=2025-05-27",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"time-logs"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "2025-05-27"
+								}
+							]
+						},
+						"description": "Get list of all time logs with optional date filter"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Time Log",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{auth_token}}"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"project_id\": 1,\n    \"start_time\": \"2025-05-28 09:00:00\",\n    \"end_time\": \"2025-05-28 11:30:00\",\n    \"description\": \"Working on homepage design\",\n    \"is_billable\": true\n}"
+						},
+						"url": "{{base_url}}/time-logs",
+						"description": "Create a new time log manually"
+					},
+					"response": []
+				},
+				{
+					"name": "Show Time Log",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{auth_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": "{{base_url}}/time-logs/1",
+						"description": "Get a specific time log by ID"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Time Log",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{auth_token}}"
+							}
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"description\": \"Working on homepage redesign and nav menu\",\n    \"start_time\": \"2024-06-01 09:00:00\",\n    \"end_time\": \"2024-06-01 12:00:00\"\n}"
+						},
+						"url": "{{base_url}}/time-logs/1",
+						"description": "Update an existing time log"
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Time Log",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{auth_token}}"
+							}
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": "{{base_url}}/time-logs/1",
+						"description": "Delete a time log"
+					},
+					"response": []
+				},
+				{
+					"name": "Start Timer",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{auth_token}}"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"project_id\": 1,\n    \"description\": \"Working on feature implementation\",\n    \"is_billable\": true\n}"
+						},
+						"url": "{{base_url}}/time-logs/start",
+						"description": "Start a timer for a project"
+					},
+					"response": []
+				},
+				{
+					"name": "Stop Timer",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{auth_token}}"
+							}
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": "{{base_url}}/time-logs/1/stop",
+						"description": "Stop an active timer"
+					},
+					"response": []
+				}
+			],
+			"description": "Time logging endpoints"
+		},
+		{
+			"name": "Reports",
+			"item": [
+				{
+					"name": "Generate Report",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{auth_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/reports?from=2025-05-01&to=2025-05-31&group_by=day",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reports"
+							],
+							"query": [
+								{
+									"key": "from",
+									"value": "2025-05-01"
+								},
+								{
+									"key": "to",
+									"value": "2025-05-31"
+								},
+								{
+									"key": "group_by",
+									"value": "day"
+								}
+							]
+						},
+						"description": "Generate a report with filtering and grouping options"
+					},
+					"response": []
+				},
+				{
+					"name": "Generate Report PDF",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{auth_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/reports/export-pdf?from=2025-05-01&to=2025-05-31&group_by=day",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reports",
+								"export-pdf"
+							],
+							"query": [
+								{
+									"key": "from",
+									"value": "2025-05-01"
+								},
+								{
+									"key": "to",
+									"value": "2025-05-31"
+								},
+								{
+									"key": "group_by",
+									"value": "day"
+								}
+							]
+						},
+						"description": "Generate a report with filtering and grouping options"
+					},
+					"response": []
+				},
+				{
+					"name": "Report by Client",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{auth_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/reports?from=2024-06-01&to=2024-06-30&client_id=1&group_by=project",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reports"
+							],
+							"query": [
+								{
+									"key": "from",
+									"value": "2024-06-01"
+								},
+								{
+									"key": "to",
+									"value": "2024-06-30"
+								},
+								{
+									"key": "client_id",
+									"value": "1"
+								},
+								{
+									"key": "group_by",
+									"value": "project"
+								}
+							]
+						},
+						"description": "Generate a report for a specific client grouped by project"
+					},
+					"response": []
+				},
+				{
+					"name": "Report by Project",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": {
+								"token": "{{auth_token}}"
+							}
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/reports?from=2025-05-01&to=2025-05-30&project_id=1&group_by=day",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"reports"
+							],
+							"query": [
+								{
+									"key": "from",
+									"value": "2025-05-01"
+								},
+								{
+									"key": "to",
+									"value": "2025-05-30"
+								},
+								{
+									"key": "project_id",
+									"value": "1"
+								},
+								{
+									"key": "group_by",
+									"value": "day"
+								}
+							]
+						},
+						"description": "Generate a report for a specific project grouped by day"
+					},
+					"response": []
+				}
+			],
+			"description": "Reporting endpoints"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000/api",
+			"type": "string"
+		}
+	]
+}
