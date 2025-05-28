@@ -14,9 +14,9 @@ class ClientSeeder extends Seeder
     public function run(): void
     {
         // Get the demo user
-        $user = User::where('email', 'demo@example.com')->first();
+        $user = User::where('email', 'imtyaz@example.com')->first();
 
-        // Create some clients for the demo user
+        // Create exactly 2 clients for the demo user
         Client::create([
             'user_id' => $user->id,
             'name' => 'Acme Corporation',
@@ -30,25 +30,5 @@ class ClientSeeder extends Seeder
             'email' => 'contact@wayne.com',
             'contact_person' => 'Bruce Wayne',
         ]);
-
-        Client::create([
-            'user_id' => $user->id,
-            'name' => 'Stark Industries',
-            'email' => 'hello@stark.com',
-            'contact_person' => 'Tony Stark',
-        ]);
-
-        // For each of the other users, create 1-3 clients
-        User::where('email', '!=', 'demo@example.com')->each(function ($user) {
-            $numClients = rand(1, 3);
-            for ($i = 0; $i < $numClients; $i++) {
-                Client::create([
-                    'user_id' => $user->id,
-                    'name' => fake()->company(),
-                    'email' => fake()->companyEmail(),
-                    'contact_person' => fake()->name(),
-                ]);
-            }
-        });
     }
 } 

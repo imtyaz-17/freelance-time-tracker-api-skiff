@@ -14,66 +14,109 @@ class TimeLogSeeder extends Seeder
      */
     public function run(): void
     {
-        // Get all active projects
-        $projects = Project::where('status', 'active')->get();
+        // Get the 3 projects
+        $websiteProject = Project::where('title', 'Website Redesign')->first();
+        $appProject = Project::where('title', 'Mobile App Development')->first();
+        $securityProject = Project::where('title', 'Security Audit')->first();
 
-        // For each project, create some time logs
-        $projects->each(function ($project) {
-            // Create 5-15 time logs per project
-            $numLogs = rand(5, 15);
-            
-            for ($i = 0; $i < $numLogs; $i++) {
-                // Generate random start time within the last 30 days
-                $startTime = Carbon::now()->subDays(rand(0, 30))->subHours(rand(0, 23));
-                
-                // Random duration between 30 minutes and 4 hours
-                $durationHours = rand(30, 240) / 60;
-                $endTime = (clone $startTime)->addMinutes($durationHours * 60);
-                
-                // Create the time log
-                $timeLog = new TimeLog([
-                    'project_id' => $project->id,
-                    'start_time' => $startTime,
-                    'end_time' => $endTime,
-                    'description' => fake()->sentence(),
-                    'is_billable' => rand(0, 10) > 2, // 80% chance of being billable
-                ]);
-                
-                $timeLog->calculateHours();
-                $timeLog->save();
-            }
-            
-            // Create a few logs for today for the demo user's projects
-            if ($project->client->user->email === 'demo@example.com') {
-                for ($i = 0; $i < 3; $i++) {
-                    $startTime = Carbon::now()->subHours(rand(1, 8));
-                    $durationHours = rand(30, 180) / 60;
-                    $endTime = (clone $startTime)->addMinutes($durationHours * 60);
-                    
-                    $timeLog = new TimeLog([
-                        'project_id' => $project->id,
-                        'start_time' => $startTime,
-                        'end_time' => $endTime,
-                        'description' => fake()->sentence(),
-                        'is_billable' => true,
-                    ]);
-                    
-                    $timeLog->calculateHours();
-                    $timeLog->save();
-                }
-                
-                // Add one ongoing timer (no end_time)
-                if (rand(0, 1) === 1) {
-                    $timeLog = new TimeLog([
-                        'project_id' => $project->id,
-                        'start_time' => Carbon::now()->subMinutes(rand(5, 60)),
-                        'description' => 'Working on ' . $project->title,
-                        'is_billable' => true,
-                    ]);
-                    
-                    $timeLog->save();
-                }
-            }
-        });
+        // Create 4 time logs for Website Redesign project
+        $this->createTimeLog(
+            $websiteProject->id,
+            Carbon::now()->subDays(5)->setHour(9)->setMinute(0),
+            Carbon::now()->subDays(5)->setHour(12)->setMinute(30),
+            'Initial design mockups and wireframes',
+            true
+        );
+
+        $this->createTimeLog(
+            $websiteProject->id,
+            Carbon::now()->subDays(3)->setHour(13)->setMinute(0),
+            Carbon::now()->subDays(3)->setHour(17)->setMinute(0),
+            'Frontend development - homepage',
+            true
+        );
+
+        $this->createTimeLog(
+            $websiteProject->id,
+            Carbon::now()->subDays(2)->setHour(10)->setMinute(0),
+            Carbon::now()->subDays(2)->setHour(15)->setMinute(30),
+            'Responsive design implementation',
+            true
+        );
+
+        $this->createTimeLog(
+            $websiteProject->id,
+            Carbon::now()->subDay()->setHour(9)->setMinute(0),
+            Carbon::now()->subDay()->setHour(11)->setMinute(0),
+            'Client feedback meeting and revisions',
+            true
+        );
+
+        // Create 3 time logs for Mobile App Development project
+        $this->createTimeLog(
+            $appProject->id,
+            Carbon::now()->subDays(4)->setHour(10)->setMinute(0),
+            Carbon::now()->subDays(4)->setHour(16)->setMinute(0),
+            'App architecture planning',
+            true
+        );
+
+        $this->createTimeLog(
+            $appProject->id,
+            Carbon::now()->subDays(2)->setHour(9)->setMinute(0),
+            Carbon::now()->subDays(2)->setHour(13)->setMinute(0),
+            'UI/UX design for main screens',
+            true
+        );
+
+        $this->createTimeLog(
+            $appProject->id,
+            Carbon::now()->subDay()->setHour(14)->setMinute(0),
+            Carbon::now()->subDay()->setHour(18)->setMinute(0),
+            'API integration planning',
+            false
+        );
+
+        // Create 3 time logs for Security Audit project
+        $this->createTimeLog(
+            $securityProject->id,
+            Carbon::now()->subDays(3)->setHour(9)->setMinute(0),
+            Carbon::now()->subDays(3)->setHour(17)->setMinute(0),
+            'Initial security assessment and planning',
+            true
+        );
+
+        $this->createTimeLog(
+            $securityProject->id,
+            Carbon::now()->subDays(2)->setHour(10)->setMinute(0),
+            Carbon::now()->subDays(2)->setHour(16)->setMinute(0),
+            'Vulnerability scanning and analysis',
+            true
+        );
+
+        $this->createTimeLog(
+            $securityProject->id,
+            Carbon::now()->subDay()->setHour(13)->setMinute(0),
+            Carbon::now()->subDay()->setHour(18)->setMinute(0),
+            'Report preparation and recommendations',
+            true
+        );
+    }
+
+    /**
+     * Helper method to create a time log
+     */
+    private function createTimeLog(int $projectId, Carbon $startTime, Carbon $endTime, string $description, bool $isBillable): void
+    {
+        $timeLog = new TimeLog([
+            'project_id' => $projectId,
+            'start_time' => $startTime,
+            'end_time' => $endTime,
+            'description' => $description,
+            'is_billable' => $isBillable,
+        ]);
+        
+        $timeLog->calculateHours();
+        $timeLog->save();
     }
 } 
