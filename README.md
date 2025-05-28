@@ -77,7 +77,7 @@ A RESTful API built with Laravel 11 to help freelancers log, manage, and report 
 
 - PHP 8.2+
 - Composer
-- MySQL 5,7+ or compatible database
+- MySQL 5.7+ or compatible database
 - Git
 
 ## Installation
