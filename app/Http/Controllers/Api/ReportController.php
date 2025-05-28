@@ -41,7 +41,9 @@ final class ReportController extends Controller
             // Verify that the client belongs to the authenticated user
             $client = Client::findOrFail($validated['client_id']);
             if ($request->user()->id !== $client->user_id) {
-                return response()->json(['message' => 'Unauthorized'], 403);
+                return response()->json([
+                    'message' => 'You are not authorized to access reports for this client'
+                ], 403);
             }
 
             $query->whereHas('project', function ($query) use ($validated) {
@@ -78,10 +80,13 @@ final class ReportController extends Controller
         }
 
         return response()->json([
-            'from' => $validated['from'],
-            'to' => $validated['to'],
-            'group_by' => $groupBy,
-            'results' => $results,
+            'message' => 'Report generated successfully',
+            'data' => [
+                'from' => $validated['from'],
+                'to' => $validated['to'],
+                'group_by' => $groupBy,
+                'results' => $results,
+            ]
         ]);
     }
 

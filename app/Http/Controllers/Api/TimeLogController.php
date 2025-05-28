@@ -44,7 +44,10 @@ final class TimeLogController extends Controller
 
         $timeLogs = $query->orderBy('start_time', 'desc')->paginate(10);
 
-        return response()->json($timeLogs);
+        return response()->json([
+            'message' => 'Time logs retrieved successfully',
+            'data' => $timeLogs
+        ]);
     }
 
     /**
@@ -63,14 +66,19 @@ final class TimeLogController extends Controller
         // Verify that the project belongs to the authenticated user
         $project = Project::findOrFail($validated['project_id']);
         if ($request->user()->id !== $project->client->user_id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return response()->json([
+                'message' => 'You are not authorized to create time logs for this project'
+            ], 403);
         }
 
         $timeLog = new TimeLog($validated);
         $timeLog->calculateHours();
         $timeLog->save();
 
-        return response()->json($timeLog, 201);
+        return response()->json([
+            'message' => 'Time log created successfully',
+            'data' => $timeLog
+        ], 201);
     }
 
     /**
@@ -80,10 +88,15 @@ final class TimeLogController extends Controller
     {
         // Check if the authenticated user owns the client that the project belongs to
         if ($request->user()->id !== $timeLog->project->client->user_id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return response()->json([
+                'message' => 'You are not authorized to access this time log'
+            ], 403);
         }
 
-        return response()->json($timeLog->load('project.client'));
+        return response()->json([
+            'message' => 'Time log retrieved successfully',
+            'data' => $timeLog->load('project.client')
+        ]);
     }
 
     /**
@@ -93,7 +106,9 @@ final class TimeLogController extends Controller
     {
         // Check if the authenticated user owns the client that the project belongs to
         if ($request->user()->id !== $timeLog->project->client->user_id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return response()->json([
+                'message' => 'You are not authorized to update this time log'
+            ], 403);
         }
 
         $validated = $request->validate([
@@ -108,7 +123,9 @@ final class TimeLogController extends Controller
         if (isset($validated['project_id'])) {
             $project = Project::findOrFail($validated['project_id']);
             if ($request->user()->id !== $project->client->user_id) {
-                return response()->json(['message' => 'Unauthorized'], 403);
+                return response()->json([
+                    'message' => 'You are not authorized to move this time log to the specified project'
+                ], 403);
             }
         }
 
@@ -116,22 +133,29 @@ final class TimeLogController extends Controller
         $timeLog->calculateHours();
         $timeLog->save();
 
-        return response()->json($timeLog);
+        return response()->json([
+            'message' => 'Time log updated successfully',
+            'data' => $timeLog
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, TimeLog $timeLog): Response
+    public function destroy(Request $request, TimeLog $timeLog): JsonResponse
     {
         // Check if the authenticated user owns the client that the project belongs to
         if ($request->user()->id !== $timeLog->project->client->user_id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return response()->json([
+                'message' => 'You are not authorized to delete this time log'
+            ], 403);
         }
 
         $timeLog->delete();
 
-        return response()->noContent();
+        return response()->json([
+            'message' => 'Time log deleted successfully'
+        ]);
     }
 
     /**
@@ -148,7 +172,9 @@ final class TimeLogController extends Controller
         // Verify that the project belongs to the authenticated user
         $project = Project::findOrFail($validated['project_id']);
         if ($request->user()->id !== $project->client->user_id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return response()->json([
+                'message' => 'You are not authorized to start a timer for this project'
+            ], 403);
         }
 
         // Check if there's already an active timer
@@ -156,7 +182,7 @@ final class TimeLogController extends Controller
         if ($activeTimer) {
             return response()->json([
                 'message' => 'You already have an active timer',
-                'timer' => $activeTimer,
+                'data' => $activeTimer,
             ], 422);
         }
 
@@ -168,7 +194,10 @@ final class TimeLogController extends Controller
         ]);
         $timeLog->save();
 
-        return response()->json($timeLog, 201);
+        return response()->json([
+            'message' => 'Timer started successfully',
+            'data' => $timeLog
+        ], 201);
     }
 
     /**
@@ -178,14 +207,16 @@ final class TimeLogController extends Controller
     {
         // Check if the authenticated user owns the client that the project belongs to
         if ($request->user()->id !== $timeLog->project->client->user_id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return response()->json([
+                'message' => 'You are not authorized to stop this timer'
+            ], 403);
         }
 
         // Check if the timer is already stopped
         if ($timeLog->end_time) {
             return response()->json([
                 'message' => 'This timer is already stopped',
-                'timer' => $timeLog,
+                'data' => $timeLog,
             ], 422);
         }
 
@@ -196,7 +227,10 @@ final class TimeLogController extends Controller
         // Check if the user has logged more than 8 hours in a single day
         $this->checkDailyHours($request->user()->id, $timeLog);
 
-        return response()->json($timeLog);
+        return response()->json([
+            'message' => 'Timer stopped successfully',
+            'data' => $timeLog
+        ]);
     }
 
     /**

@@ -19,7 +19,10 @@ final class ClientController extends Controller
     {
         $clients = $request->user()->clients()->paginate(10);
 
-        return response()->json($clients);
+        return response()->json([
+            'message' => 'Clients retrieved successfully',
+            'data' => $clients
+        ]);
     }
 
     /**
@@ -35,7 +38,10 @@ final class ClientController extends Controller
 
         $client = $request->user()->clients()->create($validated);
 
-        return response()->json($client, 201);
+        return response()->json([
+            'message' => 'Client created successfully',
+            'data' => $client
+        ], 201);
     }
 
     /**
@@ -45,10 +51,15 @@ final class ClientController extends Controller
     {
         // Check if the authenticated user owns the client
         if ($request->user()->id !== $client->user_id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return response()->json([
+                'message' => 'You are not authorized to access this client'
+            ], 403);
         }
 
-        return response()->json($client);
+        return response()->json([
+            'message' => 'Client retrieved successfully',
+            'data' => $client
+        ]);
     }
 
     /**
@@ -58,7 +69,9 @@ final class ClientController extends Controller
     {
         // Check if the authenticated user owns the client
         if ($request->user()->id !== $client->user_id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return response()->json([
+                'message' => 'You are not authorized to update this client'
+            ], 403);
         }
 
         $validated = $request->validate([
@@ -69,21 +82,28 @@ final class ClientController extends Controller
 
         $client->update($validated);
 
-        return response()->json($client);
+        return response()->json([
+            'message' => 'Client updated successfully',
+            'data' => $client
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Request $request, Client $client): Response
+    public function destroy(Request $request, Client $client): JsonResponse
     {
         // Check if the authenticated user owns the client
         if ($request->user()->id !== $client->user_id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
+            return response()->json([
+                'message' => 'You are not authorized to delete this client'
+            ], 403);
         }
 
         $client->delete();
 
-        return response()->noContent();
+        return response()->json([
+            'message' => 'Client deleted successfully'
+        ]);
     }
 } 
