@@ -191,7 +191,7 @@ The API uses Laravel Sanctum for token-based authentication. To access protected
 ## Demo User
 
 After seeding the database, you can login with the following credentials:
-- Email: demo@example.com
+- Email: imtyaz@example.com
 - Password: password
 
 ## Testing
