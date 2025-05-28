@@ -20,5 +20,12 @@ Route::middleware('auth:sanctum')->group(function () {
     // Clients
     Route::apiResource('clients', ClientController::class);
     
+    // Projects
+    Route::apiResource('projects', ProjectController::class);
     
-}); 
+    // Time Logs
+    Route::apiResource('time-logs', TimeLogController::class);
+    Route::post('/time-logs/start', [TimeLogController::class, 'startTimer']);
+    Route::post('/time-logs/{timeLog}/stop', [TimeLogController::class, 'stopTimer']);
+    
+    }); 
