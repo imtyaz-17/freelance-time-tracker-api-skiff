@@ -30,4 +30,5 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Reports
     Route::get('/reports', [ReportController::class, 'index']);
+    Route::get('/reports/export-pdf', [ReportController::class, 'exportPdf']);
 }); 

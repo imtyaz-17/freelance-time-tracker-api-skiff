@@ -7,6 +7,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Project;
 use App\Models\TimeLog;
+use App\Models\User;
+use App\Notifications\DailyHoursExceededNotification;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -247,9 +249,12 @@ final class TimeLogController extends Controller
         ->sum('hours');
 
         if ($totalHours >= 8) {
-            // This would be a good place to send an email notification
-            // For now, we'll just log it
-            \Log::info("User {$userId} has logged {$totalHours} hours on {$date}");
+            // Send an email notification to the user
+            $user = User::findOrFail($userId);
+            $user->notify(new DailyHoursExceededNotification(abs($totalHours), $date));
+            
+            // Also log for debugging purposes
+            \Log::info("User {$userId} has logged {$totalHours} hours on {$date}. Email notification sent.");
         }
     }
 } 

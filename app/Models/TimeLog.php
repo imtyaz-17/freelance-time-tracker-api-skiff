@@ -52,7 +52,7 @@ final class TimeLog extends Model
     public function calculateHours(): void
     {
         if ($this->start_time && $this->end_time) {
-            $this->hours = $this->end_time->diffInSeconds($this->start_time) / 3600;
+            $this->hours = $this->start_time->diffInSeconds($this->end_time) / 3600;
         }
     }
 } 

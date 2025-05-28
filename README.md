@@ -15,7 +15,9 @@ A RESTful API built with Laravel 11 to help freelancers log, manage, and report 
   - Filter by date range, client, or project
   - Group by day, week, month, project, or client
   - Calculate total hours worked
-- **8+ Hours Notification** - Logs when a user records more than 8 hours in a day
+  - PDF export of time logs
+- **Notifications**
+  - Email alerts when 8+ hours are logged in a single day
 
 ## Database Structure
 
@@ -158,6 +160,7 @@ The API will be available at http://localhost:8000/api
   - `from` - Start date (required)
   - `to` - End date (required)
   - `group_by` - Group by day, week, month, project, or client (default: day)
+- `GET /api/reports/export-pdf` - Export time logs as PDF (same parameters as above)
 
 ## Response Format
 
